@@ -139,5 +139,5 @@ public class Tictak {
             return true;
         }
         return false;
-    }//[[[[[
+    }
 }
