@@ -38,14 +38,17 @@ public class Map extends JPanel {
 
 
     Map() {
-        addMouseListener((MouseAdapter) mouseReleased(e) {
-            super.mouseReleased(e);
-            update(e);
+        addMouseListener(new MouseAdapter() {
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                update(e);
+            }
         });
         isInitialized = false;
+
     }
-    private void update(MouseEvent e) {
-        if (isGameOver || isInitialized) return;
+    private void update (MouseEvent e) {
+        if (isGameOver || !isInitialized) return;
         int cellX = e.getX() / cellWidth;
         int cellY = e.getY() / cellHeight;
         if (!isValidCell(cellX,cellY) || !isEmptyCell(cellX,cellY))
@@ -91,7 +94,7 @@ public class Map extends JPanel {
     }
 
     private void render(Graphics g) {
-        if (isInitialized) return;
+        if (!isInitialized) return;
         int width = getWidth();
         int height =getHeight();
         cellWidth = width / fieldSizeX;
@@ -101,28 +104,28 @@ public class Map extends JPanel {
             int y = i * cellHeight;
             g.drawLine(0,y,width,y);
         }
-        for (int i = 0; i < fieldSizeX; i++) {
-            int x = i * cellWidth;
+        for (int j = 0; j < fieldSizeX; j++) {
+            int x = j * cellWidth;
             g.drawLine(x,0, x, height);
         }
         for ( int y = 0; y < fieldSizeY; y++) {
             for (int x = 0; x < fieldSizeX; x++) {
                 if (isEmptyCell(x, y)) continue;
                 if (field[y][x] ==DOT_HUMAN) {
-                    g.setColor(new Color(1,1,255));
+                    g.setColor(Color.BLUE);
                     g.fillOval(x * cellWidth + DOT_PADDING,
                             y * cellHeight + DOT_PADDING,
                             cellWidth - DOT_PADDING * 2,
                             cellHeight - DOT_PADDING * 2);
                 }else if (field[y][x] == DOT_AI) {
-                    g.setColor(Color.red);
+                    g.setColor(Color.RED);
                     g.fillRect(x * cellWidth + DOT_PADDING,
                             y * cellHeight + DOT_PADDING,
-                            cellWidth - DOT_PADDING *2,
-                            cellHeight - DOT_PADDING *2);
+                            cellWidth - DOT_PADDING * 2,
+                            cellHeight - DOT_PADDING * 2);
                 }else  {
                     throw new RuntimeException(
-                            String.format("Cant recognize cell field[%d][%d]: %d", y, x, field[y][x]));
+                            String.format("Can't recognize cell field[%d][%d]: %d", y, x, field[y][x]));
                 }
             }
         }
@@ -162,8 +165,8 @@ public class Map extends JPanel {
     }
 
     //  Проверка, может ли выйграть ПК
-    private boolean turnAIWinCell() {
-        for (int i = 0; i < fieldSizeY; i++) {
+    private boolean turnAIWinCell()  {
+         for (int i = 0; i < fieldSizeY; i++) {
             for (int j = 0; j < fieldSizeX ; j++) {
                 if(isEmptyCell(j, i)) {
                     field[i][j] = DOT_AI;
@@ -209,9 +212,9 @@ public class Map extends JPanel {
     private boolean checkLine(int x, int y, int vx, int vy, int len, int c) {
         final int far_x = x + (len - 1) * vx;
         final int far_y = y + (len - 1) * vy;
-        if (!isValidCell(far_x, far_y))return false;
+        if (!isValidCell(far_x, far_y)) return false;
         for (int i = 0; i < len; i++) {
-            if (field[y + i * vy][x + i * vx] != c)return false;
+            if (field[y + i * vy][x + i * vx] != c) return false;
         }
         return true;
     }
